@@ -1,4 +1,4 @@
-import TestBody from 'src/components/TestBody';
+import BaseTemplate from 'src/components/BaseTemplate';
 
 const CreateCreditNoteWithInvoice = () => {
     const description =  `Prueba que se realiza sobre las notas de crédito donde se crea una nueva a partir de una factura. Para empezar la prueba se debe de ingresar el nombre
@@ -7,7 +7,7 @@ const CreateCreditNoteWithInvoice = () => {
     se responderà con el estado.`;    
     const endpointToTest = "http://localhost:8000/voucher/test-create-voucher-credit-invoice";
     return (
-        <TestBody
+        <BaseTemplate
             description={description}
             endpointToTest={endpointToTest}
         />

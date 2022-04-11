@@ -1,4 +1,4 @@
-import TestBody from "src/components/TestBody";
+import BaseTemplate from "src/components/BaseTemplate";
 
 const Login = () => {
 
@@ -7,7 +7,7 @@ const Login = () => {
     se responderà con el estado.`;    
     const endpointToTest = "http://localhost:8000/login/login";
     return (
-        <TestBody
+        <BaseTemplate
             description={description}
             endpointToTest={endpointToTest}
         />
