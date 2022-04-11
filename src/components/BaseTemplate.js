@@ -1,4 +1,4 @@
-import { CCard, CCardBody, CCardHeader, CCol, CRow } from '@coreui/react';
+import { CButton, CCard, CCardBody, CCardHeader, CCol, CRow, CSpinner } from '@coreui/react';
 import { CChartBar } from '@coreui/react-chartjs';
 import React, { useEffect, useState } from 'react';
 
@@ -12,6 +12,9 @@ const TestBody = props => {
     const [activities, setActivities] = useState([]);
     const [messagesLog, setMessagesLog] = useState([]);
     const [responseTimeDataset, setResponseTimeDataset] = useState(null);
+    const [showUserInfoForm, setShowUserInfoForm] = useState(true);
+    const [showSpinner, setShowSpinner] = useState(false);
+    const [showResume, setShowResume] = useState(false);
 
     const MAX_OUTPUT_ACTIVITIES = 5;
     const MAX_OUTPUT_MESSAGGES = 20;
@@ -65,6 +68,11 @@ const TestBody = props => {
         return parseInt((endDate - initDate) / 1000);
     };
 
+    const resetForm = () => {
+        setShowResume(false);
+        setShowUserInfoForm(true);
+    };
+
     useEffect(() => {
         if(activities !== undefined && activities !== null) {
             let labels = [];
@@ -87,7 +95,9 @@ const TestBody = props => {
     }, [activities]);
 
     const fetchAPI = async (event) => {
-        event.preventDefault()
+        event.preventDefault();
+        setShowUserInfoForm(false);
+        setShowSpinner(true);
         addActivity();
         try {
             const formData = new FormData(event.currentTarget);
@@ -101,8 +111,10 @@ const TestBody = props => {
                 body: JSON.stringify(params)
             };
             const resp = await fetch(endpointToTest, requestOptions);
-            const reader= resp.body.getReader();            
             //Respuesta streaming
+            const reader= resp.body.getReader();
+            setShowSpinner(false);
+            setShowResume(true);
             while(true){
                 const {value, done} = await reader.read();
                 var string = new TextDecoder().decode(value);
@@ -126,7 +138,9 @@ const TestBody = props => {
                 <CCol xs={12}>
                     <FormDescription content={description} _href="https://testing.lincolnsoft.com.py/login"></FormDescription>
                 </CCol>
-                <CCol sm={6}>
+            </CRow>
+            <CRow>
+                {showUserInfoForm && <CCol xs={12}>
                     <CCard className="mb-4">
                         <CCardHeader>
                             <strong>Inicio de sesión</strong>
@@ -135,26 +149,23 @@ const TestBody = props => {
                             <UserInfoForm fetchAPI={fetchAPI} allowMultiple={allowMultiple} />
                         </CCardBody>
                     </CCard>
-                </CCol>
-                <CCol sm={6}>
+                </CCol>}
+                {showSpinner && <CCol xs={12}>
+                    <div style={{height: 300}}>
+                        <div style={{display: "flex", alignItems: "center", height: "100%"}}>
+                            <CSpinner style={{margin: "0 auto", display: "block"}} variant="grow"/>
+                        </div>
+                    </div>
+                </CCol>}
+            </CRow>
+            {showResume &&<CRow>
+                <CCol xs={6}>
                     <CCard className="mb-4">
                         <CCardHeader>
                             <strong>Actividades</strong>
                         </CCardHeader>
                         <CCardBody>
                             <ActivitiesTable activities={activities} />
-                        </CCardBody>
-                    </CCard>
-                </CCol>
-            </CRow>           
-            <CRow>
-                <CCol sm={6}>
-                    <CCard className="mb-4 live-messages-area">
-                        <CCardHeader>
-                            <strong>Ultimos mensajes</strong>
-                        </CCardHeader>
-                        <CCardBody>
-                            <MessagesTable messagesLog={messagesLog} />
                         </CCardBody>
                     </CCard>
                 </CCol>
@@ -169,8 +180,20 @@ const TestBody = props => {
                         </CCardBody>
                     </CCard>
                 </CCol>
-            </CRow>
-            
+                <CCol xs={12}>
+                    <CCard className="mb-4 live-messages-area">
+                        <CCardHeader>
+                            <strong>Ultimos mensajes</strong>
+                        </CCardHeader>
+                        <CCardBody>
+                            <MessagesTable messagesLog={messagesLog} />
+                        </CCardBody>
+                    </CCard>
+                </CCol>
+                <CCol xs={12}>
+                    <CButton type="button" color="primary" onClick={resetForm} >Volver</CButton>
+                </CCol>
+            </CRow>}
         </>
     )
 }
