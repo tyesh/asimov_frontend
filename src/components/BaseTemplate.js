@@ -141,14 +141,7 @@ const BaseTemplate = props => {
             </CRow>
             <CRow>
                 {showUserInfoForm && <CCol xs={12}>
-                    <CCard className="mb-4">
-                        <CCardHeader>
-                            <strong>Inicio de sesión</strong>
-                        </CCardHeader>
-                        <CCardBody>
-                            <UserInfoForm fetchAPI={fetchAPI} allowMultiple={allowMultiple} />
-                        </CCardBody>
-                    </CCard>
+                    <UserInfoForm fetchAPI={fetchAPI} allowMultiple={allowMultiple} />
                 </CCol>}
                 {showSpinner && <CCol xs={12}>
                     <div style={{height: 300}}>
@@ -160,14 +153,7 @@ const BaseTemplate = props => {
             </CRow>
             {showResume &&<CRow>
                 <CCol xs={6}>
-                    <CCard className="mb-4">
-                        <CCardHeader>
-                            <strong>Actividades</strong>
-                        </CCardHeader>
-                        <CCardBody>
-                            <ActivitiesTable activities={activities} />
-                        </CCardBody>
-                    </CCard>
+                    <ActivitiesTable activities={activities} />
                 </CCol>
                 <CCol xs={6}>
                     <CCard className="mb-4">
@@ -181,14 +167,7 @@ const BaseTemplate = props => {
                     </CCard>
                 </CCol>
                 <CCol xs={12}>
-                    <CCard className="mb-4 live-messages-area">
-                        <CCardHeader>
-                            <strong>Ultimos mensajes</strong>
-                        </CCardHeader>
-                        <CCardBody>
-                            <MessagesTable messagesLog={messagesLog} />
-                        </CCardBody>
-                    </CCard>
+                    <MessagesTable messagesLog={messagesLog} />
                 </CCol>
                 <CCol xs={12}>
                     <CButton type="button" color="primary" onClick={resetForm} >Volver</CButton>
