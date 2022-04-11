@@ -1,20 +1,39 @@
-import { CButton, CCard, CCardBody, CCardHeader, CCol, CRow, CSpinner } from '@coreui/react';
+import { CButton, CCard, CCardBody, CCardHeader, CCol, CRow, CSpinner, CToast, CToastBody, CToaster, CToastHeader } from '@coreui/react';
 import { CChartBar } from '@coreui/react-chartjs';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 import FormDescription from 'src/components/FormDescription';
 import ActivitiesTable from './UI/ActivitiesTable';
 import MessagesTable from './UI/MessagesTable';
 import UserInfoForm from './UI/UserInfoForm';
 
-const BaseTemplate = props => {
+const resumeToast = (
+    <CToast title="Prueba finalizada">
+      <CToastHeader closeButton>
+        <strong className="me-auto">Prueba finalizada</strong>
+        <small>{new Date().toLocaleString()}</small>
+      </CToastHeader>
+      <CToastBody>Se han terminado todas las actividades..</CToastBody>
+    </CToast>
+)
 
+const ToastContainter = props => {
+    const { toast, toaster } = props;
+
+    return (
+        <CToaster ref={toaster} push={toast} placement="top-end" />
+    )
+}
+
+const BaseTemplate = props => {
     const [activities, setActivities] = useState([]);
     const [messagesLog, setMessagesLog] = useState([]);
     const [responseTimeDataset, setResponseTimeDataset] = useState(null);
     const [showUserInfoForm, setShowUserInfoForm] = useState(true);
     const [showSpinner, setShowSpinner] = useState(false);
     const [showResume, setShowResume] = useState(false);
+    const [toast, addToast] = useState(0)
+    const toaster = useRef()  
 
     const MAX_OUTPUT_ACTIVITIES = 5;
     const MAX_OUTPUT_MESSAGGES = 20;
@@ -124,16 +143,19 @@ const BaseTemplate = props => {
                 }
                 if(done) {
                     updateActivities(SUCCeSS);
+                    addToast(resumeToast);
                     break;
                 }
             }
         } catch (error) {
             updateActivities(ERROR);
+            addToast(resumeToast);
         };
     };
 
     return (
         <>
+            <ToastContainter toast={toast} toaster={toaster} />
             <CRow>
                 <CCol xs={12}>
                     <FormDescription content={description} _href="https://testing.lincolnsoft.com.py/login"></FormDescription>
@@ -171,7 +193,7 @@ const BaseTemplate = props => {
                 </CCol>
                 <CCol xs={12}>
                     <CButton type="button" color="primary" onClick={resetForm} >Volver</CButton>
-                </CCol>
+                </CCol>                
             </CRow>}
         </>
     )
