@@ -7,7 +7,7 @@ import ActivitiesTable from './UI/ActivitiesTable';
 import MessagesTable from './UI/MessagesTable';
 import UserInfoForm from './UI/UserInfoForm';
 
-const TestBody = props => {
+const BaseTemplate = props => {
 
     const [activities, setActivities] = useState([]);
     const [messagesLog, setMessagesLog] = useState([]);
@@ -198,4 +198,4 @@ const TestBody = props => {
     )
 }
 
-export default TestBody
+export default BaseTemplate;
