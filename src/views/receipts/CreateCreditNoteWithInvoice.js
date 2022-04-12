@@ -10,6 +10,7 @@ const CreateCreditNoteWithInvoice = () => {
         <BaseTemplate
             description={description}
             endpointToTest={endpointToTest}
+            allowMultiple={true}
         />
     );
 }

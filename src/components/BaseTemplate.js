@@ -1,3 +1,5 @@
+import { cilBell } from '@coreui/icons';
+import CIcon from '@coreui/icons-react';
 import { CButton, CCard, CCardBody, CCardHeader, CCol, CRow, CSpinner, CToast, CToastBody, CToaster, CToastHeader } from '@coreui/react';
 import { CChartBar } from '@coreui/react-chartjs';
 import React, { useEffect, useRef, useState } from 'react';
@@ -8,10 +10,11 @@ import MessagesTable from './UI/MessagesTable';
 import UserInfoForm from './UI/UserInfoForm';
 
 const resumeToast = (
-    <CToast title="Prueba finalizada">
+    <CToast title="Prueba finalizada" autohide={true}>
       <CToastHeader closeButton>
-        <strong className="me-auto">Prueba finalizada</strong>
-        <small>{new Date().toLocaleString()}</small>
+          <CIcon icon={cilBell} />
+          <strong className="me-auto">Prueba finalizada</strong>
+          <small>{new Date().toLocaleString()}</small>
       </CToastHeader>
       <CToastBody>Se han terminado todas las actividades..</CToastBody>
     </CToast>
@@ -32,6 +35,7 @@ const BaseTemplate = props => {
     const [showUserInfoForm, setShowUserInfoForm] = useState(true);
     const [showSpinner, setShowSpinner] = useState(false);
     const [showResume, setShowResume] = useState(false);
+    const [showRestart, setShowrestart] = useState(false);
     const [toast, addToast] = useState(0)
     const toaster = useRef()  
 
@@ -68,7 +72,7 @@ const BaseTemplate = props => {
             }
             return tempAct;
         });
-    };
+    }
 
     const addMessage = node => {  
         setMessagesLog((prevState) => {
@@ -85,12 +89,13 @@ const BaseTemplate = props => {
             return 0;
         }
         return parseInt((endDate - initDate) / 1000);
-    };
+    }
 
     const resetForm = () => {
+        setShowrestart(false);
         setShowResume(false);
         setShowUserInfoForm(true);
-    };
+    }
 
     useEffect(() => {
         if(activities !== undefined && activities !== null) {
@@ -113,17 +118,26 @@ const BaseTemplate = props => {
         }
     }, [activities]);
 
-    const fetchAPI = async (event) => {
+    const userFormSubmitHandler = async (event) => {
         event.preventDefault();
         setShowUserInfoForm(false);
         setShowSpinner(true);
-        addActivity();
+        const formData = new FormData(event.currentTarget);
+        var params = {};
+        for (let [key, value] of formData.entries()) {
+            params[key] = value;
+        }
+        let qty = (params.qty === undefined || params.qty === null || params.qty > 5)  ? 1 : params.qty;
+        for(let count = 0; count < qty; count++) {
+            await fetchAPi(params);
+        }
+        setShowrestart(true);
+        addToast(resumeToast);
+    }
+
+    const fetchAPi = async (params) => {
         try {
-            const formData = new FormData(event.currentTarget);
-            var params = {};
-            for (let [key, value] of formData.entries()) {
-                params[key] = value;
-            }
+            addActivity();
             const requestOptions = {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -143,15 +157,13 @@ const BaseTemplate = props => {
                 }
                 if(done) {
                     updateActivities(SUCCeSS);
-                    addToast(resumeToast);
                     break;
                 }
             }
         } catch (error) {
             updateActivities(ERROR);
-            addToast(resumeToast);
-        };
-    };
+        }
+    }
 
     return (
         <>
@@ -163,7 +175,7 @@ const BaseTemplate = props => {
             </CRow>
             <CRow>
                 {showUserInfoForm && <CCol xs={12}>
-                    <UserInfoForm fetchAPI={fetchAPI} allowMultiple={allowMultiple} />
+                    <UserInfoForm onSubmit={userFormSubmitHandler} allowMultiple={allowMultiple} />
                 </CCol>}
                 {showSpinner && <CCol xs={12}>
                     <div style={{height: 300}}>
@@ -174,6 +186,9 @@ const BaseTemplate = props => {
                 </CCol>}
             </CRow>
             {showResume &&<CRow>
+                <CCol xs={12} style={{display: "flex", alignItems: "center", justifyContent: "center"}}>
+                    <CButton type="button" color="primary" onClick={resetForm} disabled={!showRestart} >Volver a realizar prueba</CButton>
+                </CCol>
                 <CCol xs={6}>
                     <ActivitiesTable activities={activities} />
                 </CCol>
@@ -188,12 +203,11 @@ const BaseTemplate = props => {
                         </CCardBody>
                     </CCard>
                 </CCol>
+            </CRow>}
+            {showResume && <CRow>
                 <CCol xs={12}>
                     <MessagesTable messagesLog={messagesLog} />
                 </CCol>
-                <CCol xs={12}>
-                    <CButton type="button" color="primary" onClick={resetForm} >Volver</CButton>
-                </CCol>                
             </CRow>}
         </>
     )

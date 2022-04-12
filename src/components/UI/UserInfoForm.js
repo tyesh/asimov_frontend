@@ -2,7 +2,7 @@ import { CCard, CCardBody, CCardHeader, CButton, CForm, CFormCheck, CFormInput, 
 import React from 'react';
 
 const UserInfoForm = props => {
-    const { fetchAPI, allowMultiple } = props;
+    const { onSubmit, allowMultiple } = props;
 
     return (
         <CCard className="mb-4">
@@ -10,7 +10,7 @@ const UserInfoForm = props => {
                 <strong>Inicio de sesión</strong>
             </CCardHeader>
             <CCardBody>
-                <CForm onSubmit={fetchAPI}>
+                <CForm onSubmit={onSubmit}>
                     <div className="mb-3">
                         <CFormCheck type="radio" name="enviroment" id="env-local" label="Probar en entorno local" value="local" defaultChecked/>
                         <CFormCheck type="radio" name="enviroment" id="env-testing" label="Probar en entorno de testing" value="testing"/>
