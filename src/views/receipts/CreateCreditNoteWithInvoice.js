@@ -13,6 +13,6 @@ const CreateCreditNoteWithInvoice = () => {
             allowMultiple={true}
         />
     );
-}
+};
 
-export default CreateCreditNoteWithInvoice
+export default CreateCreditNoteWithInvoice;

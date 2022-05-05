@@ -48,6 +48,11 @@ const _nav = [
         component: CNavItem,
         name: 'Nota crédito (Factura)',
         to: '/session-test/create-note-credit-invoice',
+      },
+      {
+        component: CNavItem,
+        name: 'Imprimir Nota',
+        to: '/session-test/print-voucher',
       }
     ]
   },

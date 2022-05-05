@@ -76,6 +76,7 @@ const BaseTemplateTest = props => {
                 }
             }
         } catch (error) {
+            console.log(error);
             updateActivities(STATUS_ERROR);
         }
     };
